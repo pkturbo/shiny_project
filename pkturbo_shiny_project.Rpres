@@ -1,0 +1,69 @@
+A Shiny app to visualize household utility usage
+========================================================
+author: pkturbo
+date: 7/22/2015
+
+Introduction
+========================================================
+
+These slide will introduce my Shiny app.
+
+I have collected household utilty usage for the past several years.
+This app lets you see this data, one year at a time, for any of three utilities: gas, water or electricity.
+
+
+Read  and manipulate the data
+========================================================
+
+Read the data
+<small>
+```{r}
+data <- read.csv("utility_usage.csv", sep=",", header=T)
+```
+</small>
+
+Now subset the data for the year you select
+<small>
+```{r, eval=FALSE}
+subset(data, select=c(input$energy), subset=(Year == input$year))
+```
+</small>
+
+Plotting
+========================================================
+
+Sets the axis scale depending on which utility you want to see
+<small>
+```{r, eval=FALSE}
+yl <- 120
+    if(input$energy=="Water") yl <- 10
+
+    barplot(dataInput()[,input$energy],
+            main=paste(input$energy, "in", input$year),
+            ylab="Consumption (in US$)", ylim=c(0,yl),
+            xlab="Weeks (Jan to Dec)", xlim=c(1,52))
+```
+</small>
+
+Here's the code: ui.R
+========================================================
+<small>
+```{r, eval=FALSE}
+library(shiny)
+# Define the overall UI
+shinyUI(
+   fluidPage(
+     titlePanel("Price of Gas / Electricity / Water Consumption over one year"),
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("energy", "Type of energy:",
+                    choices=c("Gas", "Electricity", "Water")),
+        selectInput("year", "Year:",
+                    choices=c("2012", "2013", "2014")),
+        hr(),
+        helpText("Data from my utility bills.", br(),
+                 "Select the type of energy and the year to get the appropriate bar plot.")),
+        mainPanel(
+        plotOutput("plot1")))))
+```
+</small>
